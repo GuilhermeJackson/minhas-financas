@@ -3,6 +3,7 @@ package com.lamim.minhasfinancas.service.impl;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
@@ -22,8 +23,10 @@ public class LancamentoServiceImpl implements LancamentoService{
 	private LancamentoRepository repository;
 	
 	public LancamentoServiceImpl(LancamentoRepository repository) {
+		super();
 		this.repository = repository;
 	}
+	
 	@Override
 	@Transactional
 	public Lancamento salvar(Lancamento lancamento) {
@@ -50,7 +53,7 @@ public class LancamentoServiceImpl implements LancamentoService{
 	@Override
 	@Transactional(readOnly = true)
 	public List<Lancamento> buscar(Lancamento lancamentoFiltro) {
-		Example example = Example.of(lancamentoFiltro, 
+		Example<Lancamento> example = Example.of(lancamentoFiltro, 
 				ExampleMatcher.matching()
 				.withIgnoreCase()
 				.withStringMatcher(StringMatcher.CONTAINING));
@@ -85,6 +88,10 @@ public class LancamentoServiceImpl implements LancamentoService{
 		if (lancamento.getTipo() == null) {
 			throw new RegraNegocioException("Informe um tipo de lançamento!");
 		}
+	}
+	@Override
+	public Optional<Lancamento> obterPorId(Long id) {
+		return repository.findById(id);
 	}
 
 }
