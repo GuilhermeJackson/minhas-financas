@@ -85,7 +85,7 @@ public class LancamentoResource {
 		new ResponseEntity<String>("Lançamento não encontrado na base de dados.", HttpStatus.BAD_REQUEST));
 	}
 	
-	@DeleteMapping("id")
+	@DeleteMapping("{id}")
 	private ResponseEntity<String> deletar (@PathVariable("id") Long id) {
 		return lancamentoService.obterPorId(id).map(entity -> {
 			try {
