@@ -14,18 +14,18 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lamim.minhasfinancas.exception.RegraNegocioException;
 import com.lamim.minhasfinancas.model.entity.Lancamento;
 import com.lamim.minhasfinancas.model.enums.StatusLancamento;
+import com.lamim.minhasfinancas.model.enums.TipoLacamento;
 import com.lamim.minhasfinancas.model.repository.LancamentoRepository;
 import com.lamim.minhasfinancas.service.LancamentoService;
+import com.lamim.minhasfinancas.service.UsuarioService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor 
 public class LancamentoServiceImpl implements LancamentoService{
 
-	private LancamentoRepository repository;
-	
-	public LancamentoServiceImpl(LancamentoRepository repository) {
-		super();
-		this.repository = repository;
-	}
+	private final LancamentoRepository repository;
 	
 	@Override
 	@Transactional
@@ -92,6 +92,20 @@ public class LancamentoServiceImpl implements LancamentoService{
 	@Override
 	public Optional<Lancamento> obterPorId(Long id) {
 		return repository.findById(id);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public BigDecimal obterSaldoPorUsuario(Long id) {
+		BigDecimal receitas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLacamento.RECEITA);
+		BigDecimal despesas = repository.obterSaldoPorTipoLancamentoEUsuario(id, TipoLacamento.DESPESA);
+		
+		receitas = receitas == null ? BigDecimal.ZERO : receitas;
+		despesas = despesas == null ? BigDecimal.ZERO : despesas;
+		
+		BigDecimal saldo = receitas.subtract(despesas);
+		
+		return saldo;
 	}
 
 }
