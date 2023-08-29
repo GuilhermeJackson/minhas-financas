@@ -34,7 +34,7 @@ public class LancamentoResource {
 	private final UsuarioService usuarioService;
 	
 	@GetMapping
-	public ResponseEntity<Object> buscar(
+	public ResponseEntity buscar(
 			@RequestParam(value = "descricao", required = false) String descricao,
 			@RequestParam(value = "mes", required = false) Integer mes,
 			@RequestParam(value = "ano", required = false)Integer ano,
@@ -46,11 +46,11 @@ public class LancamentoResource {
 		lancamentoFiltro.setMes(mes);
 		
 		Optional<Usuario> usuario = usuarioService.obterPorId(idUsuario);
-		
-		if(usuario.isPresent()) {
+
+		if(!usuario.isPresent()) {
 			return ResponseEntity.badRequest().body("Não foi possível realizar a consulta");
 		}
-		if(!usuario.isPresent()) {
+		if(usuario.isPresent()) {
 			lancamentoFiltro.setUsuario(usuario.get());			
 		}
 		
