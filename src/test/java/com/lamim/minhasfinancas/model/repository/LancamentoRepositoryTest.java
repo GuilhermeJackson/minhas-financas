@@ -85,7 +85,7 @@ public class LancamentoRepositoryTest {
 		return lancamento;
 	}
 
-	private Lancamento criarLancamento() {
+	public static Lancamento criarLancamento() {
 		return Lancamento.builder().ano(2019).mes(3).descricao("Descricao").valor(BigDecimal.valueOf(10))
 				.tipo(TipoLacamento.DESPESA).status(StatusLancamento.PENDENTE).dataCadastro(LocalDate.now()).build();
 	}
