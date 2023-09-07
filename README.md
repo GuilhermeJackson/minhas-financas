@@ -1,4 +1,5 @@
 # Sistema Financeiro
+Este projeto tem como objetivo disponibilizar endpoints para realizar operações financeiras gerenciando status de pagamentos e tipos de operações por usuário.
 
 ## Tipos de commits encontrados nesse projeto:
 feat: uma nova feature (recurso) que você está adicionando a uma aplicação específica
