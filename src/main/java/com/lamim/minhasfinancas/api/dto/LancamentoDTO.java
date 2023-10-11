@@ -4,11 +4,15 @@ import java.math.BigDecimal;
 
 import com.lamim.minhasfinancas.model.enums.TipoLacamento;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class LancamentoDTO {
 	private Long id;
 	private String descricao;

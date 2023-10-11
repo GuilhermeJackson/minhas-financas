@@ -39,6 +39,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 	@Transactional
 	public Usuario salvarUsuario(Usuario usuario) {
 		validarEmail(usuario.getEmail());
+		validarNome(usuario.getNome());
 		return repository.save(usuario);
 	}
 
@@ -47,6 +48,18 @@ public class UsuarioServiceImpl implements UsuarioService {
 		boolean isExiste = repository.existsByEmail(email);
 		if(isExiste) {
 			throw new RegraNegocioException("Já existe um usuário cadastrado com esse e-mail");
+		}
+	}
+	
+	@Override
+	public void validarNome(String nome) {
+		String nomeValidado = nome.trim();
+		boolean isExiste = repository.existsByNome(nomeValidado);
+		if(isExiste) {
+			throw new RegraNegocioException("Já existe um usuário cadastrado com esse nome");
+		}
+		if(nomeValidado.isEmpty()) {
+			throw new RegraNegocioException("Nome está vazio");
 		}
 	}
 
