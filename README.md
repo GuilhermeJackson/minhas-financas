@@ -1,18 +1,69 @@
 # Sistema Financeiro
-Este projeto tem como objetivo disponibilizar endpoints para realizar operações financeiras gerenciando status de pagamentos e tipos de operações por usuário.
+Este projeto permite que os usuários realizem operações financeiras, como criar, atualizar e excluir lançamentos financeiros (receitas ou despesas), verificar seu saldo e autenticação do usuário. Encontramos também outros recursos para validação de regras de negócios, como evitar registros duplicados de usuários com o mesmo e-mail ou nome entre outros.
 
-## Tipos de commits encontrados nesse projeto:
-- feat: uma nova feature (recurso) que você está adicionando a uma aplicação específica
-- fix: a resolução de um bug
-- style: recurso e atualizações relacionadas à estilização
-- refactor: refatoração de uma seção específica da base de código
-- test: tudo o que for relacionado a testes
-- docs: tudo o que for relacionado à documentação
-- chore: manutenção regular do código.
+
+
+## API Reference
+### /usuarios
+#### Salvar novo usuário
+
+```http
+  POST /api/usuarios
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `N/A` | `void` | **Salvar um novo usuário no banco de dados** |
+
+```
+RequestBody
+{
+    "nome": String,
+    "email": String
+    "senha": String
+}
+```
+
+#### Autenticar usuário
+
+```http
+  POST /api/usuarios/autenticar
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `N/A`      | `void` | **Autenticação do usuário na aplicação** |
+
+```
+RequestBody
+{
+    "email": String
+    "senha": String
+}
+```
+
+#### Buscar saldo do usuário
+
+```http
+  GET /api/usuarios/${id}/saldo
+```
+
+| Parameter | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `Integer` | `BigDecimal` | **Retorna o valor do saldo do usuário** |
+
+```
+Response - 200
+{
+    "saldo": BigDecimal
+}
+```
+
+
 
 ## Modo de instalar
-- Instale Java 17 e PostgreSQL;
-- Clone o projeto na sua maquina e importe o projeto;
+- Instale Java 17, Spring Boot e PostgreSQL;
+- Clone o projeto na sua maquina e importe o projeto para sua IDE;
 - Crie um novo banco de dados com o nome de 'minhasfinancas' no PostgreSQL
 - Crie um schema em PostgreSQL > Database > minhasfinancas > Schemas > novo schme com nome 'financas'
 - Rode a aplicação Java
