@@ -99,7 +99,7 @@ public class LancamentoServiceImpl implements LancamentoService{
 	public BigDecimal obterSaldoPorUsuario(Long id) {
 		BigDecimal receitas = repository.obterSaldoPorTipoLancamentoEUsuarioEStatus(id, TipoLacamento.RECEITA,StatusLancamento.EFETIVADO );
 		BigDecimal despesas = repository.obterSaldoPorTipoLancamentoEUsuarioEStatus(id, TipoLacamento.DESPESA,StatusLancamento.EFETIVADO );
-		
+
 		receitas = receitas == null ? BigDecimal.ZERO : receitas;
 		despesas = despesas == null ? BigDecimal.ZERO : despesas;
 		

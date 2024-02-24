@@ -29,95 +29,93 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/lancamentos")
-@RequiredArgsConstructor 
+@RequiredArgsConstructor
 public class LancamentoResource {
 	private final LancamentoService lancamentoService;
 	private final UsuarioService usuarioService;
-	
+
 	@GetMapping
 	public ResponseEntity buscar(
 			@RequestParam(value = "descricao", required = false) String descricao,
 			@RequestParam(value = "mes", required = false) Integer mes,
-			@RequestParam(value = "ano", required = false)Integer ano,
-			@RequestParam(value = "usuario") long idUsuario
-			) {
+			@RequestParam(value = "ano", required = false) Integer ano,
+			@RequestParam(value = "usuario") long idUsuario) {
 		Lancamento lancamentoFiltro = new Lancamento();
 		lancamentoFiltro.setDescricao(descricao);
 		lancamentoFiltro.setAno(ano);
 		lancamentoFiltro.setMes(mes);
-		
+
 		Optional<Usuario> usuario = usuarioService.obterPorId(idUsuario);
 
-		if(!usuario.isPresent()) {
+		if (!usuario.isPresent()) {
 			return ResponseEntity.badRequest().body("Não foi possível realizar a consulta");
 		}
-		if(usuario.isPresent()) {
-			lancamentoFiltro.setUsuario(usuario.get());			
+		if (usuario.isPresent()) {
+			lancamentoFiltro.setUsuario(usuario.get());
 		}
-		
+
 		List<Lancamento> lancamentos = lancamentoService.buscar(lancamentoFiltro);
 		return ResponseEntity.ok(lancamentos);
 	}
-	
+
 	@PutMapping("{id}/atualiza-status")
 	public ResponseEntity atualizarStatus(
 			@PathVariable("id") Long id,
 			@RequestBody AtualizaStatusDTO dto) {
 		return lancamentoService.obterPorId(id).map(entity -> {
 			StatusLancamento statusSelecionado = StatusLancamento.valueOf(dto.getStatus());
-			
-			if(statusSelecionado == null) {
+
+			if (statusSelecionado == null) {
 				return ResponseEntity.badRequest().body("Status inválido!");
 			}
 			try {
 				entity.setStatus(statusSelecionado);
 				lancamentoService.atualizar(entity);
 				return ResponseEntity.ok(entity);
-				
+
 			} catch (RegraNegocioException e) {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
-		}).orElseGet(() -> 
-		new ResponseEntity<String>("Lançamento não encontrado na base de dados.", HttpStatus.BAD_REQUEST));
+		}).orElseGet(() -> new ResponseEntity<String>("Lançamento não encontrado na base de dados.",
+				HttpStatus.BAD_REQUEST));
 	}
-	
+
 	@GetMapping("{id}")
-	public ResponseEntity obterLancamento (@PathVariable("id") Long id) {
+	public ResponseEntity obterLancamento(@PathVariable("id") Long id) {
 		return lancamentoService.obterPorId(id)
-				.map(lancamento -> 
-				new ResponseEntity(converterParaDTO(lancamento), HttpStatus.OK))
+				.map(lancamento -> new ResponseEntity(converterParaDTO(lancamento), HttpStatus.OK))
 				.orElseGet(() -> new ResponseEntity(HttpStatus.NOT_FOUND));
 	}
-	
+
 	@PostMapping
 	public ResponseEntity<Object> salvar(@RequestBody LancamentoDTO dto) {
 		try {
 			Lancamento entidade = converter(dto);
-			entidade = lancamentoService.salvar(entidade)	;
+			entidade = lancamentoService.salvar(entidade);
 			return new ResponseEntity<Object>(entidade, HttpStatus.CREATED);
 		} catch (RegraNegocioException e) {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	
+
 	@PutMapping("{id}")
-	public ResponseEntity atualizar(@PathVariable("id") Long id, @RequestBody LancamentoDTO dto ) {
+	public ResponseEntity atualizar(@PathVariable("id") Long id, @RequestBody LancamentoDTO dto) {
 		return lancamentoService.obterPorId(id).map(entity -> {
 			try {
 				Lancamento lancamento = converter(dto);
 				lancamento.setId(id);
 				lancamentoService.atualizar(lancamento);
 				return ResponseEntity.ok(lancamento);
-				
+
 			} catch (RegraNegocioException e) {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
-		}).orElseGet(() -> 
-		new ResponseEntity<String>("Lançamento não encontrado na base de dados.", HttpStatus.BAD_REQUEST));
+		}).orElseGet(() -> new ResponseEntity<String>("Lançamento não encontrado na base de dados.",
+				HttpStatus.BAD_REQUEST));
 	}
-	
+
 	@DeleteMapping("{id}")
-	private ResponseEntity<String> deletar (@PathVariable("id") Long id) {
+	private ResponseEntity<String> deletar(@PathVariable("id") Long id) {
 		return lancamentoService.obterPorId(id).map(entity -> {
 			try {
 				lancamentoService.deletar(entity);
@@ -125,10 +123,10 @@ public class LancamentoResource {
 			} catch (RegraNegocioException e) {
 				return ResponseEntity.badRequest().body(e.getMessage());
 			}
-		}).orElseGet(() -> 
-		new ResponseEntity<String>("Lançamento não encontrado na base de dados.", HttpStatus.BAD_REQUEST));
+		}).orElseGet(() -> new ResponseEntity<String>("Lançamento não encontrado na base de dados.",
+				HttpStatus.BAD_REQUEST));
 	}
-	
+
 	private LancamentoDTO converterParaDTO(Lancamento lancamento) {
 		return LancamentoDTO.builder()
 				.id(lancamento.getId())
@@ -140,9 +138,9 @@ public class LancamentoResource {
 				.tipo(lancamento.getTipo().name())
 				.usuario_id(lancamento.getUsuario().getId())
 				.build();
-				
+
 	}
-	
+
 	private Lancamento converter(LancamentoDTO dto) {
 		Lancamento lancamento = new Lancamento();
 		lancamento.setId(dto.getId());
@@ -150,19 +148,19 @@ public class LancamentoResource {
 		lancamento.setAno(dto.getAno());
 		lancamento.setMes(dto.getMes());
 		lancamento.setValor(dto.getValor());
-		
+
 		Usuario usuario = usuarioService.obterPorId(dto.getUsuario_id())
-		.orElseThrow(() ->  new RegraNegocioException("Usuário não encontrado para o ID informado!"));
+				.orElseThrow(() -> new RegraNegocioException("Usuário não encontrado para o ID informado!"));
 		lancamento.setUsuario(usuario);
 
-		if(dto.getTipo() != null) {		
+		if (dto.getTipo() != null) {
 			lancamento.setTipo(TipoLacamento.valueOf(dto.getTipo()));
 		}
-		
-		if(dto.getStatus() != null) {			
+
+		if (dto.getStatus() != null) {
 			lancamento.setStatus(StatusLancamento.valueOf(dto.getStatus()));
 		}
-		
+
 		return lancamento;
 	}
 }

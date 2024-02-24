@@ -2,8 +2,6 @@ package com.lamim.minhasfinancas.api.dto;
 
 import java.math.BigDecimal;
 
-import com.lamim.minhasfinancas.model.enums.TipoLacamento;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
